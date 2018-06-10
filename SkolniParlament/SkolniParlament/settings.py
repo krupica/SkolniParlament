@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'hlasovani.apps.HlasovaniConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -124,8 +125,8 @@ STATIC_URL = '/static/'
 LOGIN_URL = '/customers/login/'
 
 # add auth middleware and auth backend
-MIDDLEWARE += ['sesame.middleware.AuthenticationMiddleware']
-AUTHENTICATION_BACKENDS = ['sesame.backends.ModelBackend']
+# MIDDLEWARE += ['sesame.middleware.AuthenticationMiddleware']
+# AUTHENTICATION_BACKENDS = ['sesame.backends.ModelBackend']
 
 
 
