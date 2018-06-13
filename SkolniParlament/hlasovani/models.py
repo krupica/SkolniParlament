@@ -1,17 +1,46 @@
 from django.db import models
-from django.http import HttpResponseRedirect
-from django.shortcuts import redirect
 
-# Create your models here.
+
 class Student(models.Model):
     jmeno = models.CharField(max_length=30)
     prijmeni = models.CharField(max_length=30)
     trida = models.CharField(max_length=10)
     email = models.CharField(max_length=70)
     token = models.CharField(max_length=50)
-    votes = models.IntegerField(default=0)
-    voted = models.BooleanField
+    voted = models.CharField(max_length=3,default='NO')
 
+    def __str__(self):
+        return self.jmeno + '-' + self.prijmeni + '-' + self.trida + '-' + self.email + '-' + self.token+'-'+self.voted
+
+
+class Kandidat(models.Model):
+    Student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    votes = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.Student + '-' + self.votes
+
+
+class Vitezove(models.Model):
+    Kandidat = models.ForeignKey(Kandidat, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.Kandidat
+
+class DataFile(models.Model):
+    name = models.CharField(max_length=50)
+    data = models.FileField(upload_to='uploaded_files')
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        print("Saving this shit")
+
+        super(DataFile, self).save()
+        print("Saved")
+
+        file_process(self.data.url)
 
 def file_process(file=None):
 
@@ -39,17 +68,4 @@ def file_process(file=None):
     print("hotovo")
 
 
-class DataFile(models.Model):
-    name = models.CharField(max_length=50)
-    data = models.FileField(upload_to='uploaded_files')
 
-    def __str__(self):
-        return self.name
-
-    def save(self, *args, **kwargs):
-        print("Saving this shit")
-
-        super(DataFile, self).save()
-        print("Saved")
-
-        file_process(self.data.url)
