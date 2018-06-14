@@ -1,16 +1,19 @@
 from django.db import models
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
+from uuid import uuid4
 
-
+# Create your models here.
 class Student(models.Model):
     jmeno = models.CharField(max_length=30)
     prijmeni = models.CharField(max_length=30)
     trida = models.CharField(max_length=10)
     email = models.CharField(max_length=70)
-    token = models.CharField(max_length=50)
-    voted = models.CharField(max_length=3,default='NO')
+    token = models.CharField(max_length=50, blank=True)
+    voted = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.jmeno + '-' + self.prijmeni + '-' + self.trida + '-' + self.email + '-' + self.token+'-'+self.voted
+        return ("{} {} {}".format(self.jmeno, self.prijmeni, self.trida))
 
 
 class Kandidat(models.Model):
@@ -27,12 +30,38 @@ class Vitezove(models.Model):
     def __str__(self):
         return self.Kandidat
 
+
+def file_process(file=None):
+
+    print("Tak schvalne : ", file)
+    Student.objects.all().delete()
+
+    with open(file) as f:
+        linky = f.read().split("\n")
+        for line in linky:
+            data_dict = {}
+            neco = line.split(";")
+            try:
+                stud = Student()
+                stud.jmeno = neco[0]
+                stud.prijmeni = neco[1]
+                stud.trida = neco[2]
+                stud.email = neco[3]
+                stud.token = uuid4()
+                stud.save()
+            except IndexError:
+                print("Spatny index")
+        print("Parsovani dokonceno")
+
+
 class DataFile(models.Model):
-    name = models.CharField(max_length=50)
-    data = models.FileField(upload_to='uploaded_files')
+    nazev = models.CharField(max_length=50)
+    soubor = models.FileField(upload_to='uploaded_files')
+    konec_kandidovani = models.DateTimeField()
+    konec_hlasovani = models.DateTimeField()
 
     def __str__(self):
-        return self.name
+        return self.nazev
 
     def save(self, *args, **kwargs):
         print("Saving this shit")
@@ -40,32 +69,4 @@ class DataFile(models.Model):
         super(DataFile, self).save()
         print("Saved")
 
-        file_process(self.data.url)
-
-def file_process(file=None):
-
-    print("Tak schvalne : ", file)
-
-    with open(file) as f:
-        linky = f.read().split("\n")
-        for line in linky:
-            data_dict = {}
-            neco = line.split(";")
-            print(neco[0])
-            print(neco[1])
-            print(neco[2])
-            print(neco[3])
-            try:
-                data_dict["jmeno"] = neco[0]
-                data_dict["prijmeni"] = neco[1]
-                data_dict["trida"] = neco[2]
-                data_dict["email"] = neco[3]
-                # form = Student(data_dict)
-                # print(form)
-                # form.save()
-            except IndexError:
-                print("Spatny index")
-    print("hotovo")
-
-
-
+        file_process(self.soubor.url)

@@ -1,26 +1,50 @@
 from django.http import HttpResponse
-from .models import Student,Kandidat,Vitezove
-from django.template import loader
-from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.contrib import messages
-from .models import DataFile
+from django.template import loader
+from .models import Student,Kandidat,Vitezove
+
+#test-smažem
+def hlasovanitest(request):
+    all_students= Student.objects.all()
+    html=''
+    for student in all_students:
+        url='/hlasovani/'+student.token+'/'
+        vypisStudent=str(student.jmeno)
+        html+='<a href="'+url+'">'+vypisStudent+'</a><br>'
+    return HttpResponse(html)
+#test-smažem
+def kandidovattest(request):
+    all_students= Kandidat.objects.all()
+    html=''
+    for student in all_students:
+        url='/kandidovat/'+student.Student.token+'/'
+        vypisStudent=str(student.Student.jmeno)
+        html+='<a href="'+url+'">'+vypisStudent+'</a><br>'
+    return HttpResponse(html)
+
 
 
 def hlasovani(request, Student_token):
-    vybranej=Student.objects.filter(Student.token==Student_token)
-
+    vybranej=Student.objects.get(token=Student_token)
     template=loader.get_template('hlasovani/hlasovani.html')
     context={
         'vybranej': vybranej,
     }
-    html='hlasovani'
     return HttpResponse(template.render(context,request))
 
 
-def kandidovat(request, Student_token):
-    return HttpResponse('<h1>zaskrtnuti kandidovani<h1>')
+def kandidovat(request, Kandidat_token):
+    pomocnej = Student.objects.get(token=Kandidat_token)
+    vybranej = Kandidat.objects.get(Student=pomocnej)
+    template = loader.get_template('hlasovani/kandidovat.html')
+    context = {
+        'vybranej': vybranej,
+    }
+    return HttpResponse(template.render(context, request))
+
 
 
 def vysledky(request):
-    return HttpResponse("<h1>vysledky<h1>")
+    vitezove=Vitezove.objects.all()
+    context={'vitezove':vitezove}
+    return render(request,'hlasovani/vysledky.html',context)
