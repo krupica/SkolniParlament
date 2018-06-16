@@ -12,6 +12,7 @@ def hlasovanitest(request):
         vypisStudent=str(student.jmeno)
         html+='<a href="'+url+'">'+vypisStudent+'</a><br>'
     return HttpResponse(html)
+
 #test-smažem
 def kandidovattest(request):
     all_students= Kandidat.objects.all()
@@ -25,17 +26,25 @@ def kandidovattest(request):
 
 
 def hlasovani(request, Student_token):
-    vybranej=Student.objects.get(token=Student_token)
-    template=loader.get_template('hlasovani/hlasovani.html')
-    context={
-        'vybranej': vybranej,
-    }
-    return HttpResponse(template.render(context,request))
+    tokenMajitel = Student.objects.get(token=Student_token)
+    vybranaTrida=tokenMajitel.trida
+    if tokenMajitel.voted==False:
+        vybrani = Student.objects.filter(trida=vybranaTrida)
+        template = loader.get_template('hlasovani/hlasovani.html')
+        context = {
+            'vybrani': vybrani,
+            'tokenMajitel': tokenMajitel,
+        }
+        return HttpResponse(template.render(context, request))
+    else :
+        return HttpResponse('<h1>ty už jsi volil koblížku</h1>')
+
+
+
 
 
 def kandidovat(request, Kandidat_token):
-    pomocnej = Student.objects.get(token=Kandidat_token)
-    vybranej = Kandidat.objects.get(Student=pomocnej)
+    vybranej = Student.objects.get(token=Kandidat_token)
     template = loader.get_template('hlasovani/kandidovat.html')
     context = {
         'vybranej': vybranej,
@@ -46,5 +55,7 @@ def kandidovat(request, Kandidat_token):
 
 def vysledky(request):
     vitezove=Vitezove.objects.all()
-    context={'vitezove':vitezove}
+    context={'vitezove':vitezove,
+             }
+
     return render(request,'hlasovani/vysledky.html',context)
