@@ -1,0 +1,12 @@
+{% if vitezove %}
+    {% for vitez in vitezove %}
+    <p>
+        {{vitez.Kandidat.Student.trida}}:
+        {{vitez.Kandidat.Student.jmeno}} {{vitez.Kandidat.Student.prijmeni}}
+         -{{vitez.Kandidat.votes}} hlasů
+    </p>
+    {% endfor %}
+
+{% else %}
+    <h1>Volby ještě neskončily</h1>
+{% endif %}
