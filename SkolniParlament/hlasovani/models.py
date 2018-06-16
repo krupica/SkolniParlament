@@ -13,7 +13,7 @@ class Student(models.Model):
     voted = models.BooleanField(default=False)
 
     def __str__(self):
-        return ("{} {} {}".format(self.jmeno, self.prijmeni, self.trida))
+        return ("{} {} {} {}".format(self.jmeno, self.prijmeni, self.trida, self.token))
 
 
 class Kandidat(models.Model):
@@ -21,20 +21,36 @@ class Kandidat(models.Model):
     votes = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.Student + '-' + self.votes
+        return str(self.Student) + '-' + str(self.votes)
 
 
 class Vitezove(models.Model):
     Kandidat = models.ForeignKey(Kandidat, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.Kandidat
+        return str(self.Kandidat)
+
+class DataFile(models.Model):
+    nazev = models.CharField(max_length=50)
+    soubor = models.FileField(upload_to='uploaded_files')
+    konec_kandidovani = models.DateTimeField()
+    konec_hlasovani = models.DateTimeField()
+
+    def __str__(self):
+        return self.nazev
+
+    def save(self, *args, **kwargs):
+        print("Saving this shit")
+
+        super(DataFile, self).save()
+        print("Saved")
+
+        file_process(self.soubor.url)
 
 
 def file_process(file=None):
 
     print("Tak schvalne : ", file)
-    Student.objects.all().delete()
 
     with open(file) as f:
         linky = f.read().split("\n")
@@ -54,19 +70,5 @@ def file_process(file=None):
         print("Parsovani dokonceno")
 
 
-class DataFile(models.Model):
-    nazev = models.CharField(max_length=50)
-    soubor = models.FileField(upload_to='uploaded_files')
-    konec_kandidovani = models.DateTimeField()
-    konec_hlasovani = models.DateTimeField()
 
-    def __str__(self):
-        return self.nazev
 
-    def save(self, *args, **kwargs):
-        print("Saving this shit")
-
-        super(DataFile, self).save()
-        print("Saved")
-
-        file_process(self.soubor.url)
