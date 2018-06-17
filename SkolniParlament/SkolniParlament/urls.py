@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from django.contrib import admin
 from django.urls import include
-from hlasovani import views
+from SkolniParlament.hlasovani import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),

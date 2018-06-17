@@ -1,6 +1,8 @@
-<select>
-    {%for vybranej in vybrani%}
-    <option value="vybranej">{{vybranej}}</option>
-    {% endfor %}
+<form action="#", method="get" id="forma">
+    <select form="forma" name="tunatoto">
+        {%for vybranej in vybrani%}
+            <option value={{vybranej.id}}>{{vybranej}}</option>
+        {% endfor %}
     </select>
-<button type="button">HLASOVAT</button>
+    <button type="submit">HLASOVAT</button>
+</form>
