@@ -36,7 +36,6 @@ class Vitezove(models.Model):
     prijmeni = models.CharField(max_length=30)
     trida = models.CharField(max_length=10)
     votes = models.IntegerField(default=0)
-    datum = models.DateTimeField(default=datetime.now, blank=True)
 
     def __str__(self):
         return ("{} {} {} {}".format(self.jmeno, self.prijmeni, self.trida, self.votes))
