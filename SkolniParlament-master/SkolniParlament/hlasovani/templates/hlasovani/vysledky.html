@@ -1,9 +1,9 @@
 {% if vitezove %}
     {% for vitez in vitezove %}
     <p>
-        {{vitez.Kandidat.Student.trida}}:
-        {{vitez.Kandidat.Student.jmeno}} {{vitez.Kandidat.Student.prijmeni}}
-         -{{vitez.Kandidat.votes}} hlasů
+        {{vitez.trida}}:
+        {{vitez.jmeno}} {{vitez.prijmeni}}
+         -{{vitez.votes}} hlasů
     </p>
     {% endfor %}
 
